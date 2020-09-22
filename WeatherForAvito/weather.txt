@@ -1,0 +1,2 @@
+http://api.openweathermap.org/data/2.5/weather?q=Moscow&units=metric&APPID=05f86f84c1e28be95a4b6b8a0f2eb83a
+{"coord":{"lon":37.62,"lat":55.75},"weather":[{"id":803,"main":"Clouds","description":"broken clouds","icon":"04d"}],"base":"stations","main":{"temp":13.73,"feels_like":9.46,"temp_min":13,"temp_max":15,"pressure":1015,"humidity":76},"visibility":10000,"wind":{"speed":6,"deg":270},"clouds":{"all":75},"dt":1600698273,"sys":{"type":1,"id":9029,"country":"RU","sunrise":1600657999,"sunset":1600702308},"timezone":10800,"id":524901,"name":"Moscow","cod":200}
