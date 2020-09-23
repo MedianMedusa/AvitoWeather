@@ -92,10 +92,14 @@
       <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Release|x64'">input</DynamicSource>
       <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).moc</QtMocFileName>
     </ClCompile>
+    <ClCompile Include="QMyClient.cpp" />
     <ClCompile Include="QMyServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="QMyServer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="QMyClient.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

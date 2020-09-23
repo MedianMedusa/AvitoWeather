@@ -26,9 +26,15 @@
     <ClCompile Include="QMyServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="QMyClient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="QMyServer.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="QMyClient.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
