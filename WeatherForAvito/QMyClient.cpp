@@ -133,6 +133,17 @@ QString QMyClient::parseJson(QString s)
 	{
 		QJsonObject obj = json.object();
 		QJsonObject responseJson;
+		//qDebug() << responseJson.value("cod").toInt();
+		//check code:
+		if (obj.value("cod") != 200)
+		{
+			responseJson.insert("cod", obj.value("cod"));
+			responseJson.insert("message", obj.value("message"));
+
+			QJsonDocument responseJsonDocument;
+			responseJsonDocument.setObject(responseJson);
+			return responseJsonDocument.toJson();
+		}
 
 		//city:
 		responseJson.insert("city", obj.value("name"));
