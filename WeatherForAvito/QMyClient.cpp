@@ -18,12 +18,12 @@ void QMyClient::checkConfig()
 	if (configuration.open(QIODevice::ReadOnly))
 	{
 		apiUrl.setUrl(configuration.readLine().trimmed());
-		qDebug() << "The API URL is set to " << apiUrl.toString() << endl;
+		qDebug() << "The API URL is set to " << apiUrl.toString();
 		emit configSuccess();
 	}
 	else
 	{
-		qDebug() << "no configuration file found";
+		qDebug() << "No configuration file found";
 		//emit configFail();
 		std::exit(1);
 	}
@@ -37,19 +37,45 @@ void QMyClient::setRequest(QString req)
 
 void QMyClient::makeFinalUrl()
 {
-	qDebug() << userRequest;
+	//qDebug() << userRequest;
 	finalUrl = apiUrl.toString();
 	finalUrl.append("data/2.5/");
 
 	//forecast
 	if (userRequest.left(8) == "forecast")
 	{
+		
+		finalUrl.append(QString("forecast?units=metric&APPID=%1&q=").arg(token));
+
 		//check timestamp
-		finalUrl.append(QString("forecast?units=metric&APPID=%1&dt=").arg(token));
-		if (userRequest.contains("dt"))
+		if (userRequest.contains("dt="))
 		{
-			QRegularExpression regExp("dt=(.*?)[^&# ]*");
-			finalUrl.append(regExp.match(userRequest).captured() + "&q=");
+			//set accessible timestamp (nearest minimal)
+			if ((timeStamp = abs(QRegularExpression("dt=(.*?)[^&# ]*").match(userRequest).captured().mid(3).toInt())) > 0)
+			{
+				if(timeStamp > QDateTime::currentDateTime().toTime_t())
+					if (timeStamp < QDateTime::currentDateTime().toTime_t()+421200)
+						timeStamp -= timeStamp % 10800;
+					else
+					{
+						qDebug() << "Timestamp incorrect";
+						emit responseReady("This timestamp is too far away to forecast");
+						return;
+					}
+				else
+				{
+					qDebug() << "Timestamp incorrect. got: " << timeStamp << " and the current is: " << QDateTime::currentDateTime().toTime_t();
+					emit responseReady("This timestamp has already passed");
+					return;
+				}
+			}
+			else
+			{
+				qDebug() << "Timestamp incorrect";
+				emit responseReady("Incorrect timestamp");
+				return;
+			}
+			//finalUrl.append(match.mid(3) + "&");
 		}
 		else
 		{
@@ -72,9 +98,9 @@ void QMyClient::makeFinalUrl()
 	//add city
 	if (userRequest.contains("city="))
 	{
-		QRegularExpression regExp("city=(.*?)[^&# ]*");
-		QString match = regExp.match(userRequest).captured();
-		finalUrl.append(match.right(match.length() - 5) + "&");
+		//QRegularExpression regExp("city=(.*?)[^&# ]*");
+		QString match = QRegularExpression("city=(.*?)[^&# ]*").match(userRequest).captured();
+		finalUrl.append(match.mid(5) + "&");
 	}
 
 	else
@@ -88,7 +114,7 @@ void QMyClient::makeFinalUrl()
 
 void QMyClient::onFinalUrlReady()
 {
-	qDebug() <<" Connecting to "<< finalUrl;
+	qDebug() <<"Connecting to "<< finalUrl;
 	connect(this, SIGNAL(finished(QNetworkReply*)), SLOT(replyFinished(QNetworkReply*)));
 	get(QNetworkRequest(QUrl(finalUrl)));
 }
@@ -107,9 +133,28 @@ QString QMyClient::parseJson(QString s)
 	{
 		QJsonObject obj = json.object();
 		QJsonObject responseJson;
+
+		//city:
 		responseJson.insert("city", obj.value("name"));
+		if (responseJson.value("city").isUndefined())
+			responseJson.insert("city", obj.value("city").toObject().value("name"));
+
+		//unit:
 		responseJson.insert("unit", "celsius");
+
+		//temp:
 		responseJson.insert("temperature", obj.value("main").toObject().value("temp"));
+		if (responseJson.value("temperature").isUndefined())
+			foreach(QJsonValue v, obj.value("list").toArray())
+			{
+				QJsonObject obj_ = v.toObject();
+				if ((uint)obj_.value("dt").toInt() == timeStamp)
+				{
+					responseJson.insert("temperature", obj_.value("main").toObject().value("temp"));
+					break;
+				}
+			}
+
 		QJsonDocument responseJsonDocument;
 		responseJsonDocument.setObject(responseJson);
 

@@ -77,6 +77,6 @@ void QMyServer::onDisconnected()
 {
 	//socket.close();
 	//socket.deleteLater();
-	qDebug() << endl << "disconnected" << endl;
+	qDebug() << "Disconnected" << endl;
 }
 

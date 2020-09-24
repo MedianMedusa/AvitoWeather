@@ -7,6 +7,8 @@
 #include <QtNetwork/QNetworkReply>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
+#include <QDateTime>
 
 class QMyClient : public QNetworkAccessManager
 {
@@ -26,6 +28,7 @@ private:
 	QUrl apiUrl;
 	QString finalUrl;
 	void makeFinalUrl();
+	uint timeStamp;
 
 	QString parseJson(QString);
 
