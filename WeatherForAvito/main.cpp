@@ -1,12 +1,12 @@
-#include <QtCore>
+#include <QCoreApplication>
 //#include <iostream>
 //#include <QObject>
-#include <QTextStream>
-#include <QFile>
-#include <QStringList>
-#include <QUrl>
-#include <QJsonDocument>
-#include <QDebug>
+//#include <QTextStream>
+//#include <QFile>
+//#include <QStringList>
+//#include <QUrl>
+//#include <QJsonDocument>
+//#include <QDebug>
 #include "QMyServer.h"
 
 //QTextStream cout(stdout);

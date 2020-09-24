@@ -6,6 +6,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include "QMyClient.h"
 #include <QtNetwork/QNetworkReply>
+#include <QPointer>
 
 class QMyServer : public QTcpServer
 {
@@ -24,15 +25,17 @@ public slots:
 
 private:
 	QMyClient *client;
-	QString response;
-	QTcpSocket *socket;
-
+	//QString response;
+	//QPointer<QTcpSocket> socket;
+	QTcpSocket socket;
+	qintptr currentDescriptor;
 
 
 private slots:
-	void replyFinished(QNetworkReply*);
-	void sendResponse(QTcpSocket*);
+	//void replyFinished(QNetworkReply*);
+
+	void sendResponse(QString);
 
 signals:
-	void readyToResponse(QTcpSocket*);
+	void responseReady(QString);
 };
