@@ -25,7 +25,7 @@ void QMyClient::checkConfig()
 	{
 		qDebug() << "No configuration file found";
 		//emit configFail();
-		std::exit(1);
+		std::exit(1); //toDo: переделать систему аварийного выхода
 	}
 }
 
@@ -37,7 +37,6 @@ void QMyClient::setRequest(QString req)
 
 void QMyClient::makeFinalUrl()
 {
-	//qDebug() << userRequest;
 	finalUrl = apiUrl.toString();
 	finalUrl.append("data/2.5/");
 
@@ -75,7 +74,6 @@ void QMyClient::makeFinalUrl()
 				emit responseReady("Incorrect timestamp");
 				return;
 			}
-			//finalUrl.append(match.mid(3) + "&");
 		}
 		else
 		{
@@ -98,7 +96,6 @@ void QMyClient::makeFinalUrl()
 	//add city
 	if (userRequest.contains("city="))
 	{
-		//QRegularExpression regExp("city=(.*?)[^&# ]*");
 		QString match = QRegularExpression("city=(.*?)[^&# ]*").match(userRequest).captured();
 		finalUrl.append(match.mid(5) + "&");
 	}
@@ -133,10 +130,11 @@ QString QMyClient::parseJson(QString s)
 	{
 		QJsonObject obj = json.object();
 		QJsonObject responseJson;
-		//qDebug() << responseJson.value("cod").toInt();
-		//check code:
-		if (obj.value("cod") != 200)
+		//check response code:
+
+		if (obj.value("cod") != "200" && obj.value("cod") != 200)
 		{
+			//qDebug() << obj.value("cod");
 			responseJson.insert("cod", obj.value("cod"));
 			responseJson.insert("message", obj.value("message"));
 
